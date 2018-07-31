@@ -86,7 +86,7 @@ for i in range(ds_info.__len__()):
     rels, pred = cuda.to_cpu(rels), int(pred)
 
     pred_dir = cor_dir if label == pred else inc_dir
-    cls_dir = os.path.join(pred_dir, cls_ref[label])
+    cls_dir = os.path.join(pred_dir, cls_ref[int(label)])
     fname = os.path.basename(fpath)
     fdir = os.path.join(cls_dir, os.path.splitext(fname)[0])
     if not os.path.exists(fdir):
@@ -94,5 +94,5 @@ for i in range(ds_info.__len__()):
     np.save(os.path.join(fdir, 'relevance.npy'), rels[pred])
     heatmap = cvt_rel(rels[pred], args.colormap)
     cv2.imwrite(os.path.join(fdir, 'rel_heatmap.tif'), heatmap)
-    with open(os.path.join(fdir, 'pred_result.txt'.format(pred)), 'w') as fp:
+    with open(os.path.join(fdir, 'pred_result.txt'), 'w') as fp:
         fp.write(str(pred))
