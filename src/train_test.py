@@ -66,10 +66,10 @@ best_score = trainer(model, aug_train, test, args.out_dir,
 with open(os.path.join(args.out_dir, 'best_score.json'), 'w') as fp:
     json.dump(best_score, fp)
 
-train_dt_names = ['train', 'test', 'param', 'config', 'norm', 'optimizer',
+train_dt_names = ['train', 'test', 'param', 'arch', 'norm', 'optimizer',
                   'epoch', 'test_bsize', 'gpu', 'augmodes']
 train_dt_lst = [args.train_path, args.test_path, args.param_path,
-                args.config_path, args.norm, args.optname, args.epoch,
+                args.arch_path, args.norm, args.optname, args.epoch,
                 args.test_bsize, args.gpu, augmodes]
 train_dt_dic = cl.OrderedDict()
 
