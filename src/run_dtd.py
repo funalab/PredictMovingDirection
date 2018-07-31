@@ -91,8 +91,8 @@ for i in range(ds_info.__len__()):
     fdir = os.path.join(cls_dir, os.path.splitext(fname)[0])
     if not os.path.exists(fdir):
         os.mkdir(fdir)
-    np.save(os.path.join(fdir, 'relevance.npy'), rels[pred])
-    heatmap = cvt_rel(rels[pred], args.colormap)
+    np.save(os.path.join(fdir, 'relevance.npy'), rels[pred][2:])
+    heatmap = cvt_rel(rels[pred][2:], args.colormap)
     cv2.imwrite(os.path.join(fdir, 'rel_heatmap.tif'), heatmap)
     with open(os.path.join(fdir, 'pred_result.txt'), 'w') as fp:
         fp.write(str(pred))
