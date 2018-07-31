@@ -1,0 +1,1 @@
+{"weighting": true, "rate": 0.9, "bn": false, "dr": 0.5, "l2": 0.0005, "lr": 0.01, "bsize": 32, "momentum": 0.9}
