@@ -32,7 +32,7 @@ parser.add_argument('--norm', '-n', type=int, default=0,
 parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID')
 parser.add_argument('--layer', '-l', default='conv_layer7',
                     help='Target conv layer for grad cam')
-parser.add_argument('--top_n', '-t', type=int, default=5)
+parser.add_argument('--top_n', '-t', type=int, default=3)
 args = parser.parse_args()
 
 if not os.path.exists(args.out_dir):
