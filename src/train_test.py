@@ -23,7 +23,7 @@ parser.add_argument('--norm', '-n', type=int, default=0,
                     help='Input-normalization mode')
 parser.add_argument('--optname', '-o', default='MomentumSGD',
                     help='Optimizer [SGD, MomentumSGD, Adam]')
-parser.add_argument('--epoch', '-e', type=int, default=5, help='Epoch number')
+parser.add_argument('--epoch', '-e', type=int, default=50, help='Epoch number')
 parser.add_argument('--test_bsize', '-b', type=int, default=32,
                     help='Batch size for test')
 parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID')

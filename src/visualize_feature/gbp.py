@@ -11,7 +11,7 @@ reg_pool = re.compile(r'max_pool[0-9]')
 reg_fc = re.compile(r'fc_layer[0-9]')
 
 
-def guided_backprop(model, in_array, layer, top_n=5):
+def guided_backprop(model, in_array, layer, top_n=3):
     xp = cuda.get_array_module(in_array)
 
     # Forward propagation
