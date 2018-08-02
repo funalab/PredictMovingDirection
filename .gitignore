@@ -1,5 +1,6 @@
 __pycache__/
 .DS_Store
+*.pyc
 dataset/
 NIH3T3_timelapse/
 NIH3T3_annotated/
