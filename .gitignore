@@ -1,2 +1,11 @@
 __pycache__/
 .DS_Store
+dataset/
+NIH3T3_timelapse/
+NIH3T3_annotated/
+NIH3T3_4foldcv/
+U373_timelapse/
+U373_annotated/
+U373_4foldcv/
+
+
