@@ -2,6 +2,7 @@ __pycache__/
 .DS_Store
 *.pyc
 dataset/
+results/
 NIH3T3_timelapse/
 NIH3T3_annotated/
 NIH3T3_4foldcv/
