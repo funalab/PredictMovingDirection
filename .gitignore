@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 dataset/
 results/
+results_U373/
 NIH3T3_timelapse/
 NIH3T3_annotated/
 NIH3T3_4foldcv/
