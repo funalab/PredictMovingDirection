@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage_exit() {
-        echo "Usage: $0 -d path/to/dataset -o path/to/results -g GPU_id" 1>&2
+        echo "Usage: $0 -d path/to/dataset -r path/to/results -g GPU_id" 1>&2
         exit 1
 }
 
