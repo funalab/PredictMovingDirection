@@ -1,20 +1,20 @@
 #!/bin/bash
 
 usage_exit() {
-        echo "Usage: $0 -d 'dataset directory' -o 'output directory'" 1>&2
+        echo "Usage: $0 -d path/to/dataset -o path/to/results -g GPU_id" 1>&2
         exit 1
 }
 
 CMDNAME=`basename $0`
 FLG_D="FALSE"
-FLG_O="FALSE"
+FLG_R="FALSE"
 FLG_G="FALSE"
 
-while getopts :d:o:g:h OPT
+while getopts :d:r:g:h OPT
 do
   case $OPT in
     "d" ) FLG_D="TRUE"; VALUE_D="$OPTARG" ;;
-    "o" ) FLG_O="TRUE"; VALUE_O="$OPTARG" ;;
+    "r" ) FLG_R="TRUE"; VALUE_R="$OPTARG" ;;
     "g" ) FLG_G="TRUE"; VALUE_G=$OPTARG ;;
     "h" ) usage_exit ;;
     \?  ) usage_exit ;;
@@ -25,8 +25,8 @@ if [ $FLG_D = "TRUE" ]; then
 else
   usage_exit
 fi
-if [ $FLG_O = "TRUE" ]; then
-  OUT=${VALUE_O%/}
+if [ $FLG_R = "TRUE" ]; then
+  RES=${VALUE_R%/}
 else
   usage_exit
 fi
@@ -35,11 +35,13 @@ if [ $FLG_G = "TRUE" ]; then
 else
   GPU_ID=-1
 fi
-mkdir $OUT
+if [ ! -e "$RES" ]; then
+    mkdir "$RES"
+fi
 
 FOLDS=(0 1 2 3)
 for n in ${FOLDS[@]}; do
-    python ./src/train_test.py $DATA/fold$n/train $DATA/fold$n/test $OUT/fold$n -g $GPU_ID
+    python ./src/train_test.py "$DATA"/fold$n/train "$DATA"/fold$n/test "$RES"/fold$n -g $GPU_ID
 done
 
-python ./src/agg_results.py --results $OUT
+python ./src/agg_results.py --results $RES
