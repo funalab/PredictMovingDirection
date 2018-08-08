@@ -3,7 +3,7 @@ This repository contains the code for performing the experiments in the paper: "
 This project is carried out by [Funahashi lab at Keio
 University](https://fun.bio.keio.ac.jp).
 
-The commands below assume starting from the "PredictMovingDirection".
+The commands below assume starting from the `PredictMovingDirection/` directory.
 
 REQUIREMENTS
 -------------
