@@ -1,0 +1,4 @@
+chainer==1.24.0
+opencv-python
+pandas==0.20.1
+scikit-image==0.13.0
