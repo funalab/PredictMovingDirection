@@ -33,7 +33,7 @@ To download and unzip the dataset, please run:
 ./download_dataset.sh
 ```
 
-Otherwise, the dataset is available at: XXXXXXXXXXXXXXX.zip
+Or download the dataset directly from [here](https://fun.bio.keio.ac.jp/software/MDPredictor/NIH3T3_4foldcv.zip) (52MB) and unzip it.
 
 
 PREPARING THE NIH/3T3 DATASET FROM THE RAW IMAGES
@@ -48,7 +48,8 @@ Instead of downloading the image dataset as described above, you can prepare the
     ./download_raw.sh
     ```
 
-    Otherwise, please download from: XXXXXXXXXXXXXXX.zip, then unzip.
+    Otherwise, please download it from
+    [here](https://fun.bio.keio.ac.jp/software/MDPredictor/NIH3T3_timelapse.zip) (1.2GB), and unzip it.
 
 2. Annotate moving direction and create image patches
 
