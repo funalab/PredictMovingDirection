@@ -1,9 +1,9 @@
-# Predicting the future direction of cell movement with convolutional neural networks
+# PredictMovingDirection
 This repository contains the code for performing the experiments in the paper: "Predicting the future direction of cell movement with convolutional neural networks".
 This project is carried out by [Funahashi lab at Keio
 University](https://fun.bio.keio.ac.jp).
 
-The commands below assume starting from the "PredictingTheFutureDirectionOfCellMovement".
+The commands below assume starting from the "PredictMovingDirection".
 
 REQUIREMENTS
 -------------
