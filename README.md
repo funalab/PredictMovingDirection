@@ -16,7 +16,7 @@ REQUIREMENTS
 
 You can use the following command to install the above Python packages and dependencies:
 
-    `pip install -r requirements.txt`
+    pip install -r requirements.txt
 
 
 GETTING THE NIH/3T3 DATASET
@@ -25,7 +25,7 @@ The NIH/3T3 image dataset for training and validation of the CNN models are too 
 
 To download and unzip the dataset, please run:
 
-    `./download_dataset.sh`
+    ./download_dataset.sh
 
 Otherwise, the dataset is available at: XXXXXXXXXXXXXXX.zip
 
@@ -38,7 +38,7 @@ Instead of downloading the image dataset as described above, you can prepare the
 
     To download and unzip, please run:
 
-        `./download_raw.sh`
+        ./download_raw.sh
 
     Otherwise, please download from: XXXXXXXXXXXXXXX.zip, then unzip.
 
@@ -46,15 +46,15 @@ Instead of downloading the image dataset as described above, you can prepare the
 
     Please run:
 
-        `./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images`
+        ./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images
 
     Annotated image patches and their motility measure will be saved in `./NIH3T3_annotated` directory.
 
-3. Create dataset for 4-fold cross validation
+3. Create dataset for training and validation of the CNN models
 
     Please run:
 
-        `./src/prepare_dataset/make_cv_data.py`
+        ./src/prepare_dataset/make_cv_data.py
 
     The NIH/3T3 image dataset will be saved in `./NIH3T3_4foldcv` directory.
 
@@ -63,13 +63,13 @@ TRAINING AND VALIDATION OF CNN MODELS
 --------------------------------------
 To train and test CNN models in 4-fold cross-validation, run:
 
-    `./cross_val.sh -d path/to/dataset -r path/to/results [-g GPU_id]`
+    ./cross_val.sh -d path/to/dataset -r path/to/results [-g GPU_id]
 
   * specify the argument of `-d`, which indicates the dataset directory for training and validation of the CNN models (e.g., downloaded `NIH3T3_4foldcv`)
   * specify the argument of `-r`, which indicates the results directory where resulting models and training results will be saved
   * the argument passed to `-g` indicates id of GPU used for computation (negative value indicates CPU; default is -1)
 
-Resulting directory will have the following structure:
+Results directory will have the following structure:
 ```
 results/
   +-- summary.json (Result of 4-fold cross validation)
@@ -85,9 +85,9 @@ results/
 
 VISUALIZING LOCAL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ---------------------------------------------------------
-The local feature that most strongly activates a CNN's particular neuron can be visualized by using guided backpropagation (GBP)[[1]](#ref1). To visualize the local features for the feature maps of the last convolutional neural networks, run:
+The local feature that most strongly activates a CNN's particular neuron can be visualized by using guided backpropagation (GBP)[[1]](#ref1). To visualize the local features for the feature maps of the last convolutional layers, please run:
 
-    `./visualization_gbp.sh -d path/to/dataset -r path/to/results [-g GPU_id]`
+    ./visualization_gbp.sh -d path/to/dataset -r path/to/results [-g GPU_id]
 
   * assumes that you have done 4-fold cross validation as described above
   * specify the argument of `-d`, which indicates the dataset directory used for 4-fold cross validation
@@ -114,9 +114,9 @@ results/
 
 VISUALIZING GLOABL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ------------------------------------------------------------
-The degree of contribution to the CNN prediction can be calculated for each pixel of the cell image by using deep Taylor decomposition (DTD)[[2]](#ref2). Calculated pixel-wise contribution can be visualized as a heatmap. To visualize pixel-wise contribution to CNN prediction results, run:
+The degree of contribution to the CNN prediction can be calculated for each pixel of the input image by using deep Taylor decomposition (DTD)[[2]](#ref2). Calculated pixel-wise contribution can be visualized as a heatmap. To visualize pixel-wise contribution to CNN prediction results, please run:
 
-    `./visualization_dtd.sh -d path/to/dataset -r path/to/results [-g GPU_id]`
+    ./visualization_dtd.sh -d path/to/dataset -r path/to/results [-g GPU_id]
 
   * assumes that you have done 4-fold cross validation as described above
   * specify the argument of `-d`, which indicates the dataset directory used for 4-fold cross validation
@@ -142,5 +142,5 @@ results/
 
 REFERENCES
 -----------------------
-<a name="ref1"></a> [[1] Jost Tobias Springenberg, Alexey Dosovitskiy, Thomas Brox, and Martin Riedmiller. Striving for simplicity: The all convolutional net. arXiv preprint arXiv:1412.6806, 2014.](https://arxiv.org/abs/1412.6806)
+<a name="ref1"></a> [[1] Jost Tobias Springenberg, Alexey Dosovitskiy, Thomas Brox, and Martin Riedmiller. Striving for simplicity: The all convolutional net. arXiv preprint arXiv:1412.6806, 2014.](https://arxiv.org/abs/1412.6806)   
 <a name="ref2"></a> [[2] Gr´egoire Montavon, Sebastian Lapuschkin, Alexander Binder, Wojciech Samek, and Klaus-Robert Müller. Explaining nonlinear classification decisions with deep Taylor decomposition. Pattern Recognition, 65:211–222, 2017.](https://www.sciencedirect.com/science/article/pii/S0031320316303582)
