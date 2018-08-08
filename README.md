@@ -1,5 +1,7 @@
 # Predicting the future direction of cell movement with convolutional neural networks
-This repository contains the code for performing the experiments in the paper: "Predicting the future direction of cell movement with convolutional neural networks"
+This repository contains the code for performing the experiments in the paper: "Predicting the future direction of cell movement with convolutional neural networks".
+This project is carried out by [Funahashi lab at Keio
+University](https://fun.bio.keio.ac.jp).
 
 The commands below assume starting from the "PredictingTheFutureDirectionOfCellMovement".
 
@@ -16,7 +18,9 @@ REQUIREMENTS
 
 You can use the following command to install the above Python packages and dependencies:
 
-    pip install -r requirements.txt
+```sh
+pip install -r requirements.txt
+```
 
 
 GETTING THE NIH/3T3 DATASET
@@ -25,7 +29,9 @@ The NIH/3T3 image dataset for training and validation of the CNN models are too 
 
 To download and unzip the dataset, please run:
 
-    ./download_dataset.sh
+```sh
+./download_dataset.sh
+```
 
 Otherwise, the dataset is available at: XXXXXXXXXXXXXXX.zip
 
@@ -38,7 +44,9 @@ Instead of downloading the image dataset as described above, you can prepare the
 
     To download and unzip, please run:
 
-        ./download_raw.sh
+    ```sh
+    ./download_raw.sh
+    ```
 
     Otherwise, please download from: XXXXXXXXXXXXXXX.zip, then unzip.
 
@@ -46,7 +54,9 @@ Instead of downloading the image dataset as described above, you can prepare the
 
     Please run:
 
-        ./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images
+    ```sh
+    python ./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images
+    ```
 
     Annotated image patches and their motility measure will be saved in `./NIH3T3_annotated` directory.
 
@@ -54,7 +64,9 @@ Instead of downloading the image dataset as described above, you can prepare the
 
     Please run:
 
-        ./src/prepare_dataset/make_cv_data.py
+    ```sh
+    python ./src/prepare_dataset/make_cv_data.py
+    ```
 
     The NIH/3T3 image dataset will be saved in `./NIH3T3_4foldcv` directory.
 
@@ -63,7 +75,9 @@ TRAINING AND VALIDATION OF CNN MODELS
 --------------------------------------
 To train and test CNN models in 4-fold cross-validation, run:
 
-    ./cross_val.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```sh
+./cross_val.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```
 
   * specify the argument of `-d`, which indicates the dataset directory for training and validation of the CNN models (e.g., downloaded `NIH3T3_4foldcv`)
   * specify the argument of `-r`, which indicates the results directory where resulting models and training results will be saved
@@ -74,12 +88,12 @@ Results directory will have the following structure:
 results/
   +-- summary.json (Result of 4-fold cross validation)
   +-- fold0/
-    +-- best_score.json (Best score of each evaluation criterion)
-    +-- log (Training log)
-    +-- model.npz (Trained model)
-    +-- train_detail.json  (Configuration of training)
+  |       +-- best_score.json (Best score of each evaluation criterion)
+  |       +-- log (Training log)
+  |       +-- model.npz (Trained model)
+  |       +-- train_detail.json  (Configuration of training)
   +-- fold1/
-    +-- ...
+          +-- ...
 ```
 
 
@@ -87,28 +101,35 @@ VISUALIZING LOCAL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ---------------------------------------------------------
 The local feature that most strongly activates a CNN's particular neuron can be visualized by using guided backpropagation (GBP)[[1]](#ref1). To visualize the local features for the feature maps of the last convolutional layers, please run:
 
-    ./visualization_gbp.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```sh
+./visualization_gbp.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```
 
   * assumes that you have done 4-fold cross validation as described above
   * specify the argument of `-d`, which indicates the dataset directory used for 4-fold cross validation
   * specify the argument of `-r`, which indicates the results directory where the 4-fold cross validation results are saved
 
 The visualization results will be saved in the results directory with the following structure:
+
 ```
 results/
-  +-- fold0/
-    +-- gbp/ (Results of visualization by using GBP)
-      +-- config.json (Configuration of visualization)
-      +-- correct/ (Results for correctly predicted test images)
-        +-- {moving direction}/ (Annotated moving direction)
-          +-- {cell index}/ (Index to distinguish each image patch of cell)
-            +-- local_feature_rank0_ch{channel index}.tif (Local feature for the feature map with the first highest activation)
-            +-- local_feature_rank1_ch{channel index}.tif (Local feature for the feature map with the second highest activation)
-            +-- local_feature_rank1_ch{channel index}.tif (Local feature for the feature map with the third highest activation)
-            +-- pred_result.txt (Prediction result by the trained model)
-      +-- incorrect/ (Results for incorrectly predicted test images)
-        +-- ...
-  ...
+    +-- fold0/
+    |   +-- gbp/ (Results of visualization by using GBP)
+    |       +-- config.json (Configuration of visualization)
+    |       +-- correct/ (Results for correctly predicted test images)
+    |       |   +-- {moving direction}/ (Annotated moving direction)
+    |       |       +-- {cell index}/ (Index to distinguish each image patch of cell)
+    |       |           +-- local_feature_rank0_ch{channel index}.tif
+    |       |           |   (Local feature for the feature map with the first highest activation)
+    |       |           +-- local_feature_rank1_ch{channel index}.tif
+    |       |           |   (Local feature for the feature map with the second highest activation)
+    |       |           +-- local_feature_rank1_ch{channel index}.tif
+    |       |           |   (Local feature for the feature map with the third highest activation)
+    |       |           +-- pred_result.txt (Prediction result by the trained model)
+    |       +-- incorrect/ (Results for incorrectly predicted test images)
+    |           +-- ...
+    +-- fold1/
+    ...
 ```
 
 
@@ -116,27 +137,31 @@ VISUALIZING GLOABL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ------------------------------------------------------------
 The degree of contribution to the CNN prediction can be calculated for each pixel of the input image by using deep Taylor decomposition (DTD)[[2]](#ref2). Calculated pixel-wise contribution can be visualized as a heatmap. To visualize pixel-wise contribution to CNN prediction results, please run:
 
-    ./visualization_dtd.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```sh
+./visualization_dtd.sh -d path/to/dataset -r path/to/results [-g GPU_id]
+```
 
   * assumes that you have done 4-fold cross validation as described above
   * specify the argument of `-d`, which indicates the dataset directory used for 4-fold cross validation
   * specify the argument of `-r`, which indicates the results directory where the 4-fold cross validation results are saved
 
 The visualization results will be saved in the results directory with the following structure:
+
 ```
 results/
-  +-- fold0/
-    +-- dtd/ (Results of visualization by using DTD)
-      +-- config.json (Configuration of visualization)
-      +-- correct/ (Results for correctly predicted test images)
-        +-- {moving direction}/ (Annotated moving direction)
-          +-- {cell index}/ (Index to distinguish each image patch of cell)
-            +-- rel_heatmap.tif (Heatmap of pixel-wise contribution)
-            +-- relevance.npy (Calculated pixel-wise contribution)
-            +-- pred_result.txt (Prediction result by the trained model)
-      +-- incorrect/ (Results for incorrectly predicted test images)
-        +-- ...
-  ...
+    +-- fold0/
+    |   +-- dtd/ (Results of visualization by using DTD)
+    |       +-- config.json (Configuration of visualization)
+    |       +-- correct/ (Results for correctly predicted test images)
+    |       |   +-- {moving direction}/ (Annotated moving direction)
+    |       |       +-- {cell index}/ (Index to distinguish each image patch of cell)
+    |       |           +-- rel_heatmap.tif (Heatmap of pixel-wise contribution)
+    |       |           +-- relevance.npy (Calculated pixel-wise contribution)
+    |       |           +-- pred_result.txt (Prediction result by the trained model)
+    |       +-- incorrect/ (Results for incorrectly predicted test images)
+    |           +-- ...
+    +-- fold1/
+    ...
 ```
 
 
