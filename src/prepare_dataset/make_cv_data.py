@@ -15,13 +15,13 @@ cls_ref = {
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_path', default='./NIH3T3_annotated')
-parser.add_argument('--out', default='./NIH3T3_4foldcv')
+parser.add_argument('--in_dir', default='./NIH3T3_annotated')
+parser.add_argument('--out_dir', default='./datasets/NIH3T3_4foldcv')
 parser.add_argument('--fold', '-f', type=int, default=4)
 args = parser.parse_args()
 
-if not os.path.exists(args.out):
-    os.mkdir(args.out)
+if not os.path.exists(args.out_dir):
+    os.makedirs(args.out_dir)
 
 cls_dirs = [x for x in glob(args.data_path+'/*') if os.path.isdir(x)]
 cls_dirs.sort()
@@ -48,7 +48,7 @@ fold_iter = skf.split(fpaths, labels)
 
 fold = 0
 for train_i, test_i in fold_iter:
-    fold_dir = os.path.join(args.out, 'fold{}'.format(fold))
+    fold_dir = os.path.join(args.out_dir, 'fold{}'.format(fold))
     if not os.path.exists(fold_dir):
         os.mkdir(fold_dir)
     train_dir = os.path.join(fold_dir, 'train')
@@ -78,5 +78,5 @@ for train_i, test_i in fold_iter:
 
     fold += 1
 
-    with open(os.path.join(args.out, 'config.txt'), 'w') as fp:
+    with open(os.path.join(args.out_dir, 'config.txt'), 'w') as fp:
         fp.write(args.data_path)

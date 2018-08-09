@@ -1,10 +1,10 @@
 #!/bin/bash
 
 baseURL='https://fun.bio.keio.ac.jp/software/MDPredictor/'
-zipfile='NIH3T3_timelapse.zip'
+zipfile='raw_images.zip'
 concatURL=${baseURL}${zipfile}
 
-echo "downloading the raw time-lapse phase contrast images of NIH/3T3 fibroblasts..."
+echo "downloading the raw time-lapse phase contrast images..."
 if type wget > /dev/null 2>&1; then
     wget $concatURL
 elif type curl > /dev/null 2>&1; then

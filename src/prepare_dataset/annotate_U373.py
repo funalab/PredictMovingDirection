@@ -12,7 +12,7 @@ metrics = ['t_tot', 'd', 'd_tot', 'd_net', 'r_con', 'speed',
 
 
 parser = argparse.ArgumentParser(description='Annotation in moving direction')
-parser.add_argument('--in_dir', default='./U373_timelapse', help='Input data directory')
+parser.add_argument('--in_dir', default='./raw_images/U373_timelapse', help='Input data directory')
 parser.add_argument('--out_dir', default='./U373_annotated', help='Output directory path')
 parser.add_argument('--track', '-t', default='tracking_result.csv', help='Manual tracking result')
 parser.add_argument('--interval', '-i', type=int, default=15, help='Shooting interval (min)')

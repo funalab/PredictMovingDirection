@@ -23,24 +23,25 @@ pip install -r requirements.txt
 ```
 
 
-GETTING THE NIH/3T3 DATASET
+GETTING THE IMAGE DATASETS
 ----------------------------
-The NIH/3T3 image dataset for training and validation of the CNN models are too large to store in the repository. Please download the dataset using instructions below.
+The image datasets for training and validation of the CNN models are too large to store in the repository. Please download the datasets using instructions below.
 
-To download and unzip the dataset, please run:
+To download and unzip the datasets, please run:
 
 ```sh
-./download_dataset.sh
+./download_datasets.sh
 ```
 
-Or download the dataset directly from [here](https://fun.bio.keio.ac.jp/software/MDPredictor/NIH3T3_4foldcv.zip) (52MB) and unzip it.
+Or download the datasets directly from [here](https://fun.bio.keio.ac.jp/software/MDPredictor/dataset.zip) (85.5MB) and unzip it.
 
+Downloaded datasets directory (`datasets`) contains the NIH/3T3 dataset (`NIH3T3_4foldcv`) and the U373 dataset (`U373_dataset`).
 
-PREPARING THE NIH/3T3 DATASET FROM THE RAW IMAGES
+PREPARING THE DATASETS FROM THE RAW IMAGES
 ---------------------------------------------------
-Instead of downloading the image dataset as described above, you can prepare the dataset from the raw images by the following procedure:
+Instead of downloading the image datasets as described above, you can prepare the datasets from the raw images by the following procedure:
 
-1. Download the raw time-lapse phase contrast images of NIH/3T3 fibroblasts
+1. Download the raw time-lapse phase contrast images
 
     To download and unzip, please run:
 
@@ -49,27 +50,36 @@ Instead of downloading the image dataset as described above, you can prepare the
     ```
 
     Otherwise, please download it from
-    [here](https://fun.bio.keio.ac.jp/software/MDPredictor/NIH3T3_timelapse.zip) (1.2GB), and unzip it.
+    [here](https://fun.bio.keio.ac.jp/software/MDPredictor/raw_images.zip) (1.25GB), and unzip it.
+
+    Downloaded raw images directory (`raw_images`) contains the raw time-lapse phase contrast images and manual tracking results of NIH/3T3 (`NIH3T3_timelapse`) and U373 (`U373_timelapse`) cells. Images of U373 cells are the part of the dataset used in the ISBI (International Symposium on Biomedical Imaging) cell tracking challenge 2015[[1]](#ref1)[[2]](#ref2).
 
 2. Annotate moving direction and create image patches
 
-    Please run:
+    For images of NIH/3T3, please run:
 
     ```sh
-    python ./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images
+    python ./src/prepare_dataset/annotate_NIH3T3.py --in_dir /path/to/raw_images/NIH3T3_timelapse
     ```
 
-    Annotated image patches and their motility measure will be saved in `./NIH3T3_annotated` directory.
+    For images of U373, please run:
+
+    ```sh
+    python ./src/prepare_dataset/annotate_U373.py --in_dir /path/to/raw_images/U373_timelapse
+    ```
+
+    Annotated image patches and their motility measure will be saved in `./NIH3T3_annotated` or `./U373_annotated`, respectively.
 
 3. Create dataset for training and validation of the CNN models
 
     Please run:
 
     ```sh
-    python ./src/prepare_dataset/make_cv_data.py
+    python ./src/prepare_dataset/make_cv_data.py --in_dir /path/to/annotated_images --out_dir /path/to/dataset
     ```
 
-    The NIH/3T3 image dataset will be saved in `./NIH3T3_4foldcv` directory.
+    * specify the argument of `--in_dir`, which indicates the annotated image directory (e.g., `./NIH3T3_annotated`)
+    * specify the argument of `--out_dir`, which indicates the dataset directory where created dataset will be saved (e.g., `./datasets/NIH3T3_4foldcv`)
 
 
 TRAINING AND VALIDATION OF CNN MODELS
@@ -80,8 +90,8 @@ To train and test CNN models in 4-fold cross-validation, run:
 ./cross_val.sh -d path/to/dataset -r path/to/results [-g GPU_id]
 ```
 
-  * specify the argument of `-d`, which indicates the dataset directory for training and validation of the CNN models (e.g., downloaded `NIH3T3_4foldcv`)
-  * specify the argument of `-r`, which indicates the results directory where resulting models and training results will be saved
+  * specify the argument of `-d`, which indicates the dataset directory for training and validation of the CNN models (e.g., downloaded `./datasets/NIH3T3_4foldcv`)
+  * specify the argument of `-r`, which indicates the results directory where resulting models and training results will be saved (e.g., `./NIH3T3_results`)
   * the argument passed to `-g` indicates id of GPU used for computation (negative value indicates CPU; default is -1)
 
 Results directory will have the following structure:
@@ -100,7 +110,7 @@ results/
 
 VISUALIZING LOCAL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ---------------------------------------------------------
-The local feature that most strongly activates a CNN's particular neuron can be visualized by using guided backpropagation (GBP)[[1]](#ref1). To visualize the local features for the feature maps of the last convolutional layers, please run:
+The local feature that most strongly activates a CNN's particular neuron can be visualized by using guided backpropagation (GBP)[[3]](#ref3). To visualize the local features for the feature maps of the last convolutional layers, please run:
 
 ```sh
 ./visualization_gbp.sh -d path/to/dataset -r path/to/results [-g GPU_id]
@@ -136,7 +146,7 @@ results/
 
 VISUALIZING GLOABL IMAGE FEATURES LEARNED BY THE CNN MODELS
 ------------------------------------------------------------
-The degree of contribution to the CNN prediction can be calculated for each pixel of the input image by using deep Taylor decomposition (DTD)[[2]](#ref2). Calculated pixel-wise contribution can be visualized as a heatmap. To visualize pixel-wise contribution to CNN prediction results, please run:
+The degree of contribution to the CNN prediction can be calculated for each pixel of the input image by using deep Taylor decomposition (DTD)[[4]](#ref4). Calculated pixel-wise contribution can be visualized as a heatmap. To visualize pixel-wise contribution to CNN prediction results, please run:
 
 ```sh
 ./visualization_dtd.sh -d path/to/dataset -r path/to/results [-g GPU_id]
@@ -168,5 +178,7 @@ results/
 
 REFERENCES
 -----------------------
-<a name="ref1"></a> [[1] Jost Tobias Springenberg, Alexey Dosovitskiy, Thomas Brox, and Martin Riedmiller. Striving for simplicity: The all convolutional net. arXiv preprint arXiv:1412.6806, 2014.](https://arxiv.org/abs/1412.6806)   
-<a name="ref2"></a> [[2] Gr´egoire Montavon, Sebastian Lapuschkin, Alexander Binder, Wojciech Samek, and Klaus-Robert Müller. Explaining nonlinear classification decisions with deep Taylor decomposition. Pattern Recognition, 65:211–222, 2017.](https://www.sciencedirect.com/science/article/pii/S0031320316303582)
+<a name="ref1"></a> [[1] Martin Maˇska, Vladim ́ır Ulman, David Svoboda, Pavel Matula, Petr Matula, Cristina Ederra, Ainhoa Urbiola, Tom ́as Espan ̃a, Subramanian Venkatesan, Deepak MW Balak, et al. A benchmark for comparison of cell tracking algorithms. Bioinformatics, 30(11):1609–1617, 2014.](https://academic.oup.com/bioinformatics/article/30/11/1609/283435)
+<a name="ref2"></a> [[2] Vladim ́ır Ulman, Martin Maˇska, Klas EG Magnusson, Olaf Ronneberger, Carsten Haubold, Nathalie Harder, Pavel Matula, Petr Matula, David Svo- boda, Miroslav Radojevic, et al. An objective comparison of cell-tracking algorithms. Nature methods, 14(12):1141, 2017.](https://www.nature.com/articles/nmeth.4473)
+<a name="ref3"></a> [[3] Jost Tobias Springenberg, Alexey Dosovitskiy, Thomas Brox, and Martin Riedmiller. Striving for simplicity: The all convolutional net. arXiv preprint arXiv:1412.6806, 2014.](https://arxiv.org/abs/1412.6806)   
+<a name="ref4"></a> [[4] Gr´egoire Montavon, Sebastian Lapuschkin, Alexander Binder, Wojciech Samek, and Klaus-Robert Müller. Explaining nonlinear classification decisions with deep Taylor decomposition. Pattern Recognition, 65:211–222, 2017.](https://www.sciencedirect.com/science/article/pii/S0031320316303582)
