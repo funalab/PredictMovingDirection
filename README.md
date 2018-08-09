@@ -15,6 +15,7 @@ REQUIREMENTS
 * [opencv-python](https://pypi.org/project/opencv-python/)
 * [pandas](https://pandas.pydata.org/getpandas.html)
 * [scikit-image](https://scikit-image.org/)
+* [scikit-learn](http://scikit-learn.org/stable/)
 
 You can use the following command to install the above Python packages and dependencies:
 
