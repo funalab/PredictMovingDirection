@@ -34,7 +34,7 @@ To download and unzip the datasets, please run:
 ./download_datasets.sh
 ```
 
-Or download the datasets directly from [here](https://fun.bio.keio.ac.jp/software/MDPredictor/dataset.zip) (85.5MB) and unzip it.
+Or download the datasets directly from [here](https://fun.bio.keio.ac.jp/software/MDPredictor/datasets.zip) (85.5MB) and unzip it.
 
 Downloaded datasets directory (`datasets`) contains the NIH/3T3 dataset (`NIH3T3_4foldcv`) and the U373 dataset (`U373_dataset`).
 
