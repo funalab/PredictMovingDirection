@@ -23,7 +23,7 @@ args = parser.parse_args()
 if not os.path.exists(args.out_dir):
     os.makedirs(args.out_dir)
 
-cls_dirs = [x for x in glob(args.data_path+'/*') if os.path.isdir(x)]
+cls_dirs = [x for x in glob(args.in_dir+'/*') if os.path.isdir(x)]
 cls_dirs.sort()
 
 fpaths = []
@@ -79,4 +79,4 @@ for train_i, test_i in fold_iter:
     fold += 1
 
     with open(os.path.join(args.out_dir, 'config.txt'), 'w') as fp:
-        fp.write(args.data_path)
+        fp.write(args.in_dir)
