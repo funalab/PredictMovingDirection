@@ -11,7 +11,7 @@ OVERVIEW
 The figure below shows overview of this project.
 With the code in this repository you can:
 
-  * Traning and validation of CNN models for predicting the future direction of cell movement
+  * Training and validation of Convolutional neural network (CNN) models for predicting the future direction of cell movement
   * Visualizing image features learned by the CNN models
 
 ![ovweview](https://github.com/funalab/PredictMovingDirection/blob/images/overview.gif)
