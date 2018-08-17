@@ -5,6 +5,17 @@ University](https://fun.bio.keio.ac.jp).
 
 The commands below assume starting from the `PredictMovingDirection/` directory.
 
+
+OVERVIEW
+-------------
+The figure below shows overview of this project.
+With the code in this repository you can:
+
+  * Traning and validation of CNN models for predicting the future direction of cell movement
+  * Visualizing image features learned by the CNN models
+
+
+
 REQUIREMENTS
 -------------
 * [Python 3.6+](https://www.python.org/downloads/)
