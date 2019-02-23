@@ -63,13 +63,13 @@ def main():
                 f.write('#PBS -l select=1:mpiprocs=1:ompthreads=1\n')
                 f.write('#PBS -W group_list=gi95\n')
                 f.write('#PBS -l walltime=24:00:00\n')
-                f.write('export PYTHONUSERBASE=/lustre/gi95/i95000/pmd\n')
                 f.write('cd $PBS_O_WORKDIR\n')
                 f.write('. /etc/profile.d/modules.sh\n')
                 f.write('module load anaconda3/4.3.0\n')
-                f.write('module load chainer/1.24.0\n')
-                f.write('module load cuda\n')
-                f.write('python src/train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_1/train nishimoto_revise/train_val_test/NIH3T3/fold_1/val {}/{}-{} --arch_path {}/arch_{}.json --param_path {}/para_{}.json\n'.format(opbase, i, k, opbase, i, opbase, i))
+                f.write('module load cuda intel/17.0.2.174\n')
+                f.write('export LD_LIBRARY_PATH=/lustre/app/intel/mkl/lib/intel64:/lustre/app/intel/lib/intel64_lin:$LD_LIBRARY_PATH\n')
+                f.write('export PYTHONUSERBASE=/lustre/gi95/i95000/pmd\n')
+                f.write('python train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_1/train nishimoto_revise/train_val_test/NIH3T3/fold_1/val {}/{}-{} --arch_path {}/arch_{}.json --param_path {}/para_{}.json\n'.format(opbase, i, k, opbase, i, opbase, i))
 
             os.system('qsub {}/{}-{}.ssh'.format(opbase, i, k))
         for t in range(288):  # attack 5 min until 24 hour
