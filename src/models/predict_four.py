@@ -2,6 +2,7 @@ import collections
 import re
 import six
 
+import chainer
 from chainer import Chain
 import chainer.functions as F
 import chainer.links as L
@@ -27,7 +28,7 @@ class predict_four(Chain):
 
             if reg_conv.match(name):
                 self.add_link(name,
-                              L.Convolution2D(l['in_channel'], l['out_channel'],
+                              L.Convolution2D(None, l['out_channel'],
                                               l['ksize'], pad=l['pad']))
                 if bn:
                     m = reg_num.search(name)
@@ -57,23 +58,25 @@ class predict_four(Chain):
 
             if name == 'out_layer':
                 self.add_link(name,
-                              L.Linear(l['in_size'], l['out_size']))
+                              L.Linear(None, l['out_size']))
                 self.functions[name] = [self[name]]
 
         self.functions['prob'] = [F.softmax]
 
     def __call__(self, x):
-        h = x
-        for key, funcs in six.iteritems(self.functions):
-            if key == 'prob':
-                break
-            for func in funcs:
-                if isinstance(func, L.BatchNormalization):
-                    h = func(h, test=not self.train)
-                elif func is F.dropout:
-                    h = func(h, ratio=self.dr, train=self.train)
-                else:
-                    h = func(h)
+        with chainer.using_config('train', self.train):
+            h = x
+            for key, funcs in six.iteritems(self.functions):
+                if key == 'prob':
+                    break
+                for func in funcs:
+                    if isinstance(func, L.BatchNormalization):
+                        h = func(h, test=not self.train)
+                    elif func is F.dropout:
+                        #h = func(h, ratio=self.dr, train=self.train)
+                        h = func(h, ratio=self.dr)
+                    else:
+                        h = func(h)
         return h
 
     def extract(self, x, layers=['prob']):

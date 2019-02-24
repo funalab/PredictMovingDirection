@@ -75,7 +75,8 @@ class mca_evaluator(extension.Extension):
             observation = {}
             in_arrays = self.converter(batch, self.device)
             if isinstance(in_arrays, tuple):
-                in_vars = tuple(variable.Variable(x, volatile='on')
+                #in_vars = tuple(variable.Variable(x, volatile='on')
+                in_vars = tuple(variable.Variable(x)
                                 for x in in_arrays)
 
                 xp = cuda.get_array_module(*in_vars)
@@ -97,7 +98,8 @@ class mca_evaluator(extension.Extension):
                 pred = target.predictor(**in_vars)
                 # TODO
             else:
-                in_var = variable.Variable(in_arrays, volatile='on')
+                #in_var = variable.Variable(in_arrays, volatile='on')
+                in_var = variable.Variable(in_arrays)
                 pred = target.predictor(in_var)
                 # TODO
             dic_summary.add(observation)

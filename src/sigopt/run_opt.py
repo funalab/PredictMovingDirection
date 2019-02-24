@@ -6,37 +6,38 @@ from argparse import ArgumentParser
 
 api_token = "GXFCJRJGZTPTFZTKXYJKJCHIZGNJHVFGUOFMABOKUNSYXGAB"
 dev_token = "MPTPMDWQKNCJFVWPZGIQTVWBYOGRVIVCEOKYUWOIHCPNQOOH"
-my_token = dev_token
+my_token = api_token
 
 
 def main():
     ap = ArgumentParser(description='python run_opt.py')
-    ap.add_argument('--iteration', type=int, default=100, help='Specify Number of Iteration')
+    ap.add_argument('--iteration', type=int, default=220, help='Specify Number of Iteration')
     ap.add_argument('--outdir', '-o', nargs='?', default='opt_result', help='Specify output files directory for create segmentation image and save model file')
     ap.add_argument('--num_parallel', type=int, default=4, help='Specify Number of parallel jobs')
     args = ap.parse_args()
 
     opbase = create_opbase(args.outdir)
+    os.makedirs(os.path.join(opbase, 'job_scripts'), exist_ok=True)
 
     conn = Connection(client_token=my_token)
     experiment = conn.experiments().create(
         name="NIH/3T3 model",
         parameters=[
-            dict(name='ksize conv_layer0', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer0', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer0', type='int', bounds=dict(min=1, max=6)),
-            dict(name='ksize conv_layer1', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer1', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer1', type='int', bounds=dict(min=1, max=6)),
-            dict(name='ksize conv_layer2', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer2', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer2', type='int', bounds=dict(min=1, max=6)),
-            dict(name='ksize conv_layer3', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer3', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer3', type='int', bounds=dict(min=1, max=6)),
-            dict(name='ksize conv_layer4', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer4', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer4', type='int', bounds=dict(min=3, max=8)),
-            dict(name='ksize conv_layer5', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer5', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer5', type='int', bounds=dict(min=3, max=8)),
-            dict(name='ksize conv_layer6', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer6', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer6', type='int', bounds=dict(min=5, max=10)),
-            dict(name='ksize conv_layer7', type='int', bounds=dict(min=1, max=3)),
+            dict(name='ksize conv_layer7', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer7', type='int', bounds=dict(min=5, max=10)),
             dict(name='out_size fc_layer0', type='int', bounds=dict(min=1, max=10)),
             dict(name='dr', type='int', bounds=dict(min=1, max=9)),
@@ -57,7 +58,7 @@ def main():
             json.dump(para_list, f)
 
         for k in range(1, args.num_parallel+1):
-            with open(opbase + '/{}-{}.ssh'.format(i, k), 'w') as f:
+            with open(os.path.join(opbase, 'job_scripts', '{}-{}.ssh'.format(i, k)), 'w') as f:
                 f.write('#!/bin/sh\n')
                 f.write('#PBS -q l-regular\n')
                 f.write('#PBS -l select=1:mpiprocs=1:ompthreads=1\n')
@@ -69,23 +70,27 @@ def main():
                 f.write('module load cuda intel/17.0.2.174\n')
                 f.write('export LD_LIBRARY_PATH=/lustre/app/intel/mkl/lib/intel64:/lustre/app/intel/lib/intel64_lin:$LD_LIBRARY_PATH\n')
                 f.write('export PYTHONUSERBASE=/lustre/gi95/i95000/pmd\n')
-                f.write('python train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_1/train nishimoto_revise/train_val_test/NIH3T3/fold_1/val {}/{}-{} --arch_path {}/arch_{}.json --param_path {}/para_{}.json\n'.format(opbase, i, k, opbase, i, opbase, i))
+                f.write('python train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_1/train nishimoto_revise/train_val_test/NIH3T3/fold_1/val {}/{}-{} --arch_path {}/arch_{}.json --param_path {}/para_{}.json -g 0\n'.format(opbase, i, k, opbase, i, opbase, i))
 
-            os.system('qsub {}/{}-{}.ssh'.format(opbase, i, k))
+            os.system('qsub {}/job_scripts/{}-{}.ssh'.format(opbase, i, k))
         for t in range(288):  # attack 5 min until 24 hour
             try:
                 val = 0
                 for k in range(1, args.num_parallel+1):
-                    with open('opt_iteration_{}_{}/best_score.json'.format(i, k), 'r') as f:
+                    with open('{}/{}-{}/best_score.json'.format(opbase, i, k), 'r') as f:
+                        print('Read ... {}/{}-{}/best_score.json'.format(opbase, i, k))
                         val += json.load(f)['validation_in_mca/main/mca']
                 val /= args.num_parallel
-                print('Read ... {}/outval_{}.txt'.format(opbase, i))
                 print('best MCA: {}'.format(val))
                 break
             except:
                 time.sleep(300)
 
-        with open(os.path.join(opbase + psep + 'result.txt'), 'a') as f:
+        try:
+            os.system('mv {}-* {}/job_scripts/'.format(i, opbase))
+        except:
+            pass
+        with open(os.path.join(opbase, 'result.txt'), 'a') as f:
             f.write('=======================================\n')
             f.write('[iter: {}]\n'.format(i))
             f.write('Parameter: {}\n'.format(suggestion.assignments.items()))
@@ -104,7 +109,7 @@ def main():
     if best_assignments_list.data:
         best_assignments = best_assignments_list.data[0].assignments
         print(best_assignments)
-        with open(os.path.join(opbase + psep + 'result.txt'), 'a') as f:
+        with open(os.path.join(opbase, 'result.txt'), 'a') as f:
             f.write('=======================================\n')
             f.write('[Best Parameter]\n')
             f.write(best_assignments)
