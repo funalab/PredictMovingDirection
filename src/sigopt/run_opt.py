@@ -43,11 +43,12 @@ def main():
             dict(name='ksize conv_layer7', type='int', bounds=dict(min=1, max=2)),
             dict(name='out_channel conv_layer7', type='int', bounds=dict(min=5, max=10)),
             dict(name='out_size fc_layer0', type='int', bounds=dict(min=1, max=10)),
+            dict(name='rate', type='int', bounds=dict(min=1, max=10)),
             dict(name='dr', type='int', bounds=dict(min=1, max=9)),
             dict(name='l2', type='int', bounds=dict(min=0, max=100)),
             dict(name='lr', type='int', bounds=dict(min=1, max=100)),
             dict(name='bsize', type='int', bounds=dict(min=1, max=32)),
-            dict(name='momentum', type='int', bounds=dict(min=1, max=10)),
+            dict(name='momentum', type='int', bounds=dict(min=1, max=10))
         ],
     )
     print("Created experiment: https://sigopt.com/experiment/" + experiment.id)
@@ -177,6 +178,7 @@ def convert_arch_format(suggest):
         if 'out_size {}'.format(l['name']) in suggest.keys():
             l['out_size'] = suggest['out_size {}'.format(l['name'])] * 100
 
+    convert_para['rate'] = suggest['rate'] * 0.1
     convert_para['dr'] = suggest['dr'] * 0.1
     convert_para['l2'] = suggest['l2'] * 0.00001
     convert_para['lr'] = suggest['lr'] * 0.001
