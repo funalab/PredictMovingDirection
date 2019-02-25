@@ -24,8 +24,8 @@ class train_loop:
 
     def __call__(self, model, train, test, out_dir,
                  optname='SGD', lr=1.0, rate=0.9, weighting=False,
-                 gpu=-1, bsize=64, test_bsize=10, esize=50, mname=None,
-                 progress=True, lr_attr='lr', l2=0.0,
+                 momentum=0.9, gpu=-1, bsize=64, test_bsize=10,
+                 esize=50, mname=None, progress=True, lr_attr='lr', l2=0.0,
                  keys=['main/loss', 'validation/main/loss', 'main/accuracy',
                        'validation/main/accuracy', 'validation_in_mca/main/mca'],
                  s_keys=['validation_in_mca/main/mca'],
@@ -53,7 +53,10 @@ class train_loop:
                 cls_weight = cuda.to_gpu(cls_weight)
         model.cls_weight = cls_weight
 
-        optimizer = self.optimizers[optname](lr)
+        if optname == "MomentumSGD":
+            optimizer = self.optimizers[optname](lr, momentum)
+        else:
+            optimizer = self.optimizers[optname](lr)
         optimizer.setup(model)
         if l2 > 0:
             optimizer.add_hook(WeightDecay(l2))

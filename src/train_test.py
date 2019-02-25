@@ -61,7 +61,7 @@ best_score = trainer(model, aug_train, test, args.out_dir,
                      lr_attr=args.lr_attr, gpu=args.gpu, bsize=param['bsize'],
                      test_bsize=args.test_bsize, esize=args.epoch,
                      mname=args.mname, weighting=param['weighting'],
-                     l2=param['l2'])
+                     l2=param['l2'], momentum=param['momentum'])
 
 with open(os.path.join(args.out_dir, 'best_score.json'), 'w') as fp:
     json.dump(best_score, fp)
