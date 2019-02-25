@@ -18,6 +18,9 @@ def main():
 
     opbase = create_opbase(args.outdir)
     os.makedirs(os.path.join(opbase, 'job_scripts'), exist_ok=True)
+    os.makedirs(os.path.join(opbase, 'archs'), exist_ok=True)
+    os.makedirs(os.path.join(opbase, 'params'), exist_ok=True)
+    os.makedirs(os.path.join(opbase, 'results'), exist_ok=True)
 
     conn = Connection(client_token=my_token)
     experiment = conn.experiments().create(
@@ -52,9 +55,9 @@ def main():
     for i in range(1, args.iteration+1):
         suggestion = conn.experiments(experiment.id).suggestions().create()
         arch_list, para_list = convert_arch_format(suggestion.assignments)
-        with open(os.path.join(opbase, 'arch_{}.json'.format(i)), 'w') as f:
+        with open(os.path.join(opbase, 'archs', 'arch_{}.json'.format(i)), 'w') as f:
             json.dump(arch_list, f)
-        with open(os.path.join(opbase, 'para_{}.json'.format(i)), 'w') as f:
+        with open(os.path.join(opbase, 'params', 'para_{}.json'.format(i)), 'w') as f:
             json.dump(para_list, f)
 
         for k in range(1, args.num_parallel+1):
@@ -70,15 +73,15 @@ def main():
                 f.write('module load cuda intel/17.0.2.174\n')
                 f.write('export LD_LIBRARY_PATH=/lustre/app/intel/mkl/lib/intel64:/lustre/app/intel/lib/intel64_lin:$LD_LIBRARY_PATH\n')
                 f.write('export PYTHONUSERBASE=/lustre/gi95/i95000/pmd\n')
-                f.write('python train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_1/train nishimoto_revise/train_val_test/NIH3T3/fold_1/val {}/{}-{} --arch_path {}/arch_{}.json --param_path {}/para_{}.json -g 0\n'.format(opbase, i, k, opbase, i, opbase, i))
+                f.write('python train_test.py nishimoto_revise/train_val_test/NIH3T3/fold_{}/train nishimoto_revise/train_val_test/NIH3T3/fold_{}/val {}/results/{}-{} --arch_path {}/archs/arch_{}.json --param_path {}/params/para_{}.json -g 0\n'.format(k, k, opbase, i, k, opbase, i, opbase, i))
 
             os.system('qsub {}/job_scripts/{}-{}.ssh'.format(opbase, i, k))
         for t in range(288):  # attack 5 min until 24 hour
             try:
                 val = 0
                 for k in range(1, args.num_parallel+1):
-                    with open('{}/{}-{}/best_score.json'.format(opbase, i, k), 'r') as f:
-                        print('Read ... {}/{}-{}/best_score.json'.format(opbase, i, k))
+                    with open('{}/results/{}-{}/best_score.json'.format(opbase, i, k), 'r') as f:
+                        print('Read ... {}/results/{}-{}/best_score.json'.format(opbase, i, k))
                         val += json.load(f)['validation_in_mca/main/mca']
                 val /= args.num_parallel
                 print('best MCA: {}'.format(val))
