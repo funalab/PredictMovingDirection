@@ -2,6 +2,7 @@ import os
 from glob import glob
 import numpy as np
 from skimage import io
+from skimage.color import rgb2gray
 
 import chainer
 
@@ -33,8 +34,10 @@ class get_dataset(chainer.dataset.DatasetMixin):
 
     def get_example(self, i):
         path, label = self.data_pairs[i]
-        img = io.imread(path).astype(self.dtype)
-        img = self.norm_method[self.norm](img)
+        img = io.imread(path)
+        if img.ndim >= 3:
+            img = rgb2gray(img)
+        img = self.norm_method[self.norm](img.astype(self.dtype))
         img = img.reshape(1, img.shape[0], img.shape[1])
         return img, np.int32(label)
 
