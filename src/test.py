@@ -26,6 +26,12 @@ class test_mca_evaluator(mca_evaluator):
         dic_summary = reporter_module.DictSummary()
         labels = it.get_labels()
 
+        count_summary = {
+            0:[0,0,0,0],
+            1:[0,0,0,0],
+            2:[0,0,0,0],
+            3:[0,0,0,0]
+        }
         target.predictor.train = False
         for batch in it:
             observation = {}
@@ -39,6 +45,7 @@ class test_mca_evaluator(mca_evaluator):
                 y = target.predictor(in_vars[0]).data
                 t = in_vars[1].data
                 pred = y.argmax(axis=1).reshape(t.shape)
+                count_summary[t[0]][pred[0]] += 1
 
                 for l in labels:
                     ind = xp.where(t == l)[0]
@@ -64,7 +71,7 @@ class test_mca_evaluator(mca_evaluator):
         mca_class = xp.array([float(summary._x) / float(label_cnt[l]) for l, summary
                         in six.iteritems(dic_summary._summaries)]).astype(dtype=y.dtype)
         target.predictor.train = True
-        return mca_class
+        return mca_class, count_summary
 
 
 if __name__ == '__main__':
@@ -123,7 +130,7 @@ if __name__ == '__main__':
         model.to_gpu()
 
     evaluator = test_mca_evaluator(test_iter, model)
-    mca_cls = evaluator.evaluate()
+    mca_cls, count_summary = evaluator.evaluate()
     mca_mean = np.mean(mca_cls)
     mca_std = np.std(mca_cls)
     test_dt_dic = cl.OrderedDict()
@@ -136,3 +143,8 @@ if __name__ == '__main__':
         fp.write('mca_cls: {}\n'.format(mca_cls))
         fp.write('mca_mean: {}\n'.format(mca_mean))
         fp.write('mca_std: {}\n'.format(mca_std))
+    with open(os.path.join(args.out_dir, 'confusion_matrix.txt'), 'w') as fp:
+        fp.write('upper_right: {}\n'.format(count_summary[0]))
+        fp.write('upper_left: {}\n'.format(count_summary[1]))
+        fp.write('lower_left: {}\n'.format(count_summary[2]))
+        fp.write('lower_right: {}\n'.format(count_summary[3]))
