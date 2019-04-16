@@ -133,11 +133,6 @@ if __name__ == '__main__':
     mca_cls, count_summary = evaluator.evaluate()
     mca_mean = np.mean(mca_cls)
     mca_std = np.std(mca_cls)
-    test_dt_dic = cl.OrderedDict()
-    cls_name = ['0', '1', '2', '3']
-
-    for n, c in zip(cls_name, mca_cls):
-        test_dt_dic[n] = c
 
     with open(os.path.join(args.out_dir, 'test_score.txt'), 'w') as fp:
         fp.write('mca_cls: {}\n'.format(mca_cls))
