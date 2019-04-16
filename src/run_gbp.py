@@ -5,6 +5,7 @@ import json
 
 import numpy as np
 from skimage import io
+from skimage.color import rgb2gray
 from chainer import cuda
 from chainer import serializers
 from chainer.dataset import concat_examples
@@ -83,6 +84,8 @@ for i in range(ds_info.__len__()):
     in_array, label, fpath = data[0][i], data[1][i], ds_info.data_pairs[i][0]
 
     img = io.imread(fpath)
+    if img.ndim >= 3:
+        img = rgb2gray(img)
     img = ((img - img.min()) / (img.max() - img.min()) * 255).astype(np.uint8)
 
     gbps, pred = guided_backprop(model, in_array, args.layer, args.top_n)
