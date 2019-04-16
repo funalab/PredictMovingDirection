@@ -34,6 +34,7 @@ parser.add_argument('--eps', '-e', type=float, default=1e-9, help='Eps value of 
 parser.add_argument('--lowest', type=float, default=0.0)
 parser.add_argument('--highest', type=float, default=1.0)
 parser.add_argument('--colormap', '-c', default='summer')
+parser.add_argument('--kernel', '-k', type=int, default=7)
 args = parser.parse_args()
 
 if not os.path.exists(args.out_dir):
@@ -83,7 +84,7 @@ for cls_dir in ds_info.class_dirs:
 
 for i in range(ds_info.__len__()):
     in_array, label, fpath = data[0][i], data[1][i], ds_info.data_pairs[i][0]
-    rel, pred = occulusion(model, in_array, label)
+    rel, pred = occulusion(model, in_array, label, args.kernel)
     # rels, pred = cuda.to_cpu(rels), int(pred)
     pred_dir = cor_dir if label == pred else inc_dir
     cls_dir = os.path.join(pred_dir, cls_ref[int(label)])
@@ -98,4 +99,3 @@ for i in range(ds_info.__len__()):
     cv2.imwrite(os.path.join(fdir, 'rel_heatmap.tif'), heatmap)
     with open(os.path.join(fdir, 'pred_result.txt'), 'w') as fp:
         fp.write(str(pred))
-        
