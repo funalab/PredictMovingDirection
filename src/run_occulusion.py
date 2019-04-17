@@ -84,7 +84,7 @@ for cls_dir in ds_info.class_dirs:
 
 for i in range(ds_info.__len__()):
     in_array, label, fpath = data[0][i], data[1][i], ds_info.data_pairs[i][0]
-    rel, pred = occulusion(model, in_array, label, args.kernel)
+    rel, pred = occulusion(model, in_array, label, args.kernel, args.gpu)
     # rels, pred = cuda.to_cpu(rels), int(pred)
     pred_dir = cor_dir if label == pred else inc_dir
     cls_dir = os.path.join(pred_dir, cls_ref[int(label)])
